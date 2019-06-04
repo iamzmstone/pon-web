@@ -1,0 +1,71 @@
+{% extends "base.html" %}
+{% block content %}
+<form class="layui-form layui-form-pane" method="post" action="/do-search">
+  {% csrf-field %}
+  <div class="layui-form-item">
+    <label class="layui-form-label">SN</label>
+    <div class="layui-input-inline">
+      <input type="text" name="sn" placeholder="请输入SN" autocomplete="off" class="layui-input">
+    </div>
+    <div class="layui-form-mid layui-word-aux">模糊查找，空为查找所有</div>
+  </div>
+  <div class="layui-form-item">
+    <label class="layui-form-label">收光范围</label>
+    <div class="layui-input-inline">
+      <input type="text" name="rx_min" required  lay-verify="required" placeholder="请输入最小光功率" value="-100" autocomplete="off" class="layui-input">
+    </div>
+    <div class="layui-input-inline">
+      <input type="text" name="rx_max" required  lay-verify="required" placeholder="请输入最大光功率" value="0" autocomplete="off" class="layui-input">
+    </div>
+    <div class="layui-form-mid layui-word-aux">请输入负数</div>
+  </div>
+  <div class="layui-form-item">
+    <label class="layui-form-label">入流量Bps</label>
+    <div class="layui-input-inline">
+      <input type="text" name="inbps" required  lay-verify="required" placeholder="请输入入流量Bps" autocomplete="off" class="layui-input" value=0>
+    </div>
+    <div class="layui-form-mid layui-word-aux">入流量Bps超出该值，输入0查找所有</div>
+  </div>
+  <div class="layui-form-item">
+    <label class="layui-form-label">出流量Bps</label>
+    <div class="layui-input-inline">
+      <input type="text" name="outbps" required  lay-verify="required" placeholder="请输入出流量Bps" autocomplete="off" class="layui-input" value=0>
+    </div>
+    <div class="layui-form-mid layui-word-aux">出流量Bps超出该值，输入0查找所有</div>
+  </div>
+  <div class="layui-form-item">
+    <label class="layui-form-label">入流量占比</label>
+    <div class="layui-input-inline">
+      <input type="text" name="inbw" required  lay-verify="required" placeholder="请输入入流量占比" autocomplete="off" class="layui-input" value=0>
+    </div>
+    <div class="layui-form-mid layui-word-aux">入流量占比超出该值，输入0查找所有</div>
+  </div>
+  <div class="layui-form-item" pane>
+    <label class="layui-form-label">ONU状态</label>
+    <div class="layui-input-block">
+      <input type="checkbox" name="states[]" title="正常" value="working">
+      <input type="checkbox" name="states[]" title="掉电" value="DyingGasp" checked>
+      <input type="checkbox" name="states[]" title="离线" value="Offline">
+      <input type="checkbox" name="states[]" title="LOS" value="LOS">
+    </div>
+  </div>
+  <div class="layui-form-item" pane>
+  <label class="layui-form-label">选择OLT</label>
+  <div class="layui-input-block">
+    {% for olt in olts %}
+    <input type="checkbox" name="olts[]" title="{{olt.name}}" value="{{olt.id}}">
+    {% endfor %}
+  </div>
+  </div>
+  <div class="layui-form-item">
+    <div class="layui-input-block">
+      <button class="layui-btn" lay-submit lay-filter="formDemo">立即提交</button>
+      <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+    </div>
+  </div>
+</form>
+{% endblock %}
+{% block layuijs %}
+layui.use(['element', 'form'], function(){
+});
+{% endblock %}

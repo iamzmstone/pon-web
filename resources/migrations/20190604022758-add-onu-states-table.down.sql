@@ -1,0 +1,1 @@
+drop table onu_states;

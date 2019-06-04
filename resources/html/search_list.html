@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+{% block content %}
+<table id="demo" lay-filter="test"></table>
+{% endblock %}
+{% block layuijs %}
+layui.use(['element', 'table'], function(){
+  var table = layui.table;
+
+  table.render({
+    elem: '#demo'
+    ,url: '/search' //数据接口
+    ,page: true //开启分页
+    ,limit: 10
+    ,limits: [10, 20, 40, 80]
+    ,cols: [[ //表头
+      {field: 'olt_name', title: 'olt', width:150}
+      ,{field: 'bat_name', title: 'batch', width:100}
+      ,{field: 'pon', title: 'Pon', width:60}
+      ,{field: 'oid', title: 'Oid', width:60}
+      ,{field: 'sn', title: 'SN', width:150, templet: function(d){
+      return '<a href="/onu-states/' + d.onu_id + '" class="layui-table-link">' + d.sn + '</a>'
+    }}
+      ,{field: 'state', title: '状态', width:100, templet: function(d){
+      if (d.state != 'working') {
+        return '<span class="layui-bg-red">' + d.state + '</span>' }
+      else {
+        return '<span class="layui-bg-green">' + d.state + '</span>' }
+    }}
+      ,{field: 'rx_power', title: '收光', width:80, templet: function(d){
+      if (d.rx_power < -20) {
+        return '<span class="layui-bg-red">' + d.rx_power + '</span>' }
+      else {
+        return '<span class="layui-bg-green">' + d.rx_power + '</span>' }
+    }}
+      ,{field: 'in_bps', title: 'in_Bps', width:100}
+      ,{field: 'out_bps', title: 'out_Bps', width:100}
+      ,{field: 'in_bw', title: 'in_bw', width:80, templet: function(d){
+      return d.in_bw + '%'
+    }}
+      ,{field: 'out_bw', title: 'out_bw', width:80, templet: function(d){
+      return d.out_bw + '%'
+    }}
+      ,{field: 'upd_tm', title: '收集时间', width:180}
+    ]]
+  });
+});
+{% endblock %}

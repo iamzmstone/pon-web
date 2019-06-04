@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+{% block content %}
+<table class="layui-table">
+  <colgroup>
+    <col width="150">
+    <col width="100">
+    <col width="100">
+    <col width="100">
+    <col width="100">
+    <col width="100">
+    <col width="200">
+  </colgroup>
+  <thead>
+    <tr>
+      <th>状态</th>
+      <th>收光</th>
+      <th>in_Bps</th>
+      <th>out_Bps</th>
+      <th>in_bw</th>
+      <th>out_bw</th>
+      <th>采集时间</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for s in states %}
+    <tr>
+      <td class="{{s.state|class-state}}">{{s.state}}</td>
+      <td class="{{s.rx_power|class-rx}}">{{s.rx_power}}</td>
+      <td>{{s.in_bps}}</td>
+      <td>{{s.out_bps}}</td>
+      <td class="{{s.in_bw|class-bw}}">{{s.in_bw}}</td>
+      <td class="{{s.in_bw|class-bw}}">{{s.out_bw}}</td>
+      <td>{{s.upd_tm}}</td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% endblock %}
+{% block layuijs %}
+layui.use('element', function(){
+});
+{% endblock %}
