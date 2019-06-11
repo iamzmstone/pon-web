@@ -87,7 +87,8 @@ VALUES (:onu_id, :batch_id, :state, :rx_power, :in_Bps, :out_Bps, :in_bw, :out_b
 
 -- :name get-state :? :1
 -- :doc retrieve a onu_state record according onu_id and batch_id
-SELECT * FROM onu_states
+SELECT state, rx_power, in_Bps, out_Bps, in_bw, out_bw, date_format(upd_time, '%Y-%m-%d %H:%i:%s') upd_tm
+  FROM onu_states
  WHERE onu_id = :onu_id
    AND batch_id = :batch_id
 
