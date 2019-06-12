@@ -161,3 +161,17 @@ SELECT a.onu_id, a.state, a.rx_power, a.in_Bps, a.out_Bps, a.in_bw, a.out_bw,
  WHERE a.batch_id = :batch_id
    AND a.onu_id = b.id AND b.olt_id = c.id
    AND c.id in (:v*:olts)
+
+-- :name state-group-cnt :? :*
+-- :doc retrieve count group by state
+SELECT state, count(*) cnt
+  FROM onu_states
+ WHERE batch_id = :batch_id
+ GROUP BY state
+
+-- :name batch-group-cnt :? :*
+-- :doc retrieve count group by batch_id
+SELECT b.name, count(*) cnt
+  FROM onu_states a, batches b
+ WHERE a.batch_id = b.id
+ GROUP by a.batch_id

@@ -1,10 +1,96 @@
 {% extends "base.html" %}
 {% block content %}
-  <div class="content">
-  {{docs|markdown}}
+<div class="layui-row">
+<div class="layui-card layui-col-md6">
+  <div class="layui-card-header layui-bg-green">ONU状态</div>
+  <div class="layui-card-body">
+    <canvas id="chart-state" width="400" height="300">Your browser does not support the canvas element.</canvas>
   </div>
+</div>
+<div class="layui-card layui-col-md6">
+  <div class="layui-card-header layui-bg-green">数据采集批次</div>
+  <div class="layui-card-body">
+    <canvas id="chart-batch" width="400" height="300">Your browser does not support the canvas element.</canvas>
+  </div>
+</div>
+</div>
+{% endblock %}
+{% block chartjs %}
+<script src="../js/Chart.min.js"></script>
 {% endblock %}
 {% block layuijs %}
 layui.use('element', function(){
+});
+
+window.chartColors = {
+  red: 'rgb(255, 99, 132)',
+  orange: 'rgb(255, 159, 64)',
+  yellow: 'rgb(255, 205, 86)',
+  green: 'rgb(75, 192, 192)',
+  blue: 'rgb(54, 162, 235)',
+  purple: 'rgb(153, 102, 255)',
+  grey: 'rgb(201, 203, 207)'
+};
+
+var ctx = document.getElementById('chart-state').getContext('2d');
+var myChart = new Chart(ctx, {
+    type: 'pie',
+    data: {
+        labels: {{states|json|safe}},
+        datasets: [{
+            label: 'Onu state',
+            data: {{s-cnts|json}},
+            backgroundColor: [
+              window.chartColors.red,
+              window.chartColors.orange,
+              window.chartColors.yellow,
+              window.chartColors.green,
+              window.chartColors.blue,
+              window.chartColors.purple
+            ],
+            borderWidth: 1
+        }]
+    },
+    options: {
+        responsive: true
+      }
+});
+
+var ctx = document.getElementById('chart-batch').getContext('2d');
+var myChart = new Chart(ctx, {
+    type: 'bar',
+    data: {
+        labels: {{batches|json|safe}},
+        datasets: [{
+            label: '# of ONUs',
+            data: {{b-cnts|json}},
+            backgroundColor: [
+                'rgba(255, 99, 132, 0.2)',
+                'rgba(54, 162, 235, 0.2)',
+                'rgba(255, 206, 86, 0.2)',
+                'rgba(75, 192, 192, 0.2)',
+                'rgba(153, 102, 255, 0.2)',
+                'rgba(255, 159, 64, 0.2)'
+            ],
+            borderColor: [
+                'rgba(255, 99, 132, 1)',
+                'rgba(54, 162, 235, 1)',
+                'rgba(255, 206, 86, 1)',
+                'rgba(75, 192, 192, 1)',
+                'rgba(153, 102, 255, 1)',
+                'rgba(255, 159, 64, 1)'
+            ],
+            borderWidth: 1
+        }]
+    },
+    options: {
+        scales: {
+            yAxes: [{
+                ticks: {
+                    beginAtZero: true
+                }
+            }]
+        }
+    }
 });
 {% endblock %}

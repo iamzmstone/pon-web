@@ -12,6 +12,7 @@
     <div class="layui-logo">ONU故障智能化管理</div>
     <!-- 头部区域（可配合layui已有的水平导航） -->
     <ul class="layui-nav layui-layout-left">
+      <li class="layui-nav-item"><a href="/">HOME</a></li>
       <li class="layui-nav-item"><a href="/onus">ONU列表</a></li>
       <li class="layui-nav-item"><a href="/onu-search">ONU查找</a></li>
       <li class="layui-nav-item"><a href="/onu-compare">ONU比对</a></li>
@@ -84,6 +85,8 @@
   <script src="https://cdn.staticfile.org/respond.js/1.4.2/respond.min.js"></script>
 <![endif]-->
 <script src="../layui/layui.js"></script>
+{% block chartjs %}
+{% endblock %}
 <script>
 //JavaScript代码区域
   {% block layuijs %}

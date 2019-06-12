@@ -6,7 +6,7 @@
     <col width="150">
     <col width="60">
     <col width="60">
-    <col width="150">
+    <col width="200">
     <col width="100">
     <col width="100">
     <col width="100">
@@ -41,8 +41,8 @@
       <td class="{{diff.s1.rx_power|class-rx}}">{{diff.s1.rx_power}}</td>
       <td>{{diff.s1.in_bps}}</td>
       <td>{{diff.s1.out_bps}}</td>
-      <td class="{{diff.s1.in_bw|class-bw}}">{{diff.s1.in_bw}}</td>
-      <td class="{{diff.s1.out_bw|class-bw}}">{{diff.s1.out_bw}}</td>
+      <td class="{{diff.s1.in_bw|class-bw}}">{{diff.s1.in_bw}}%</td>
+      <td class="{{diff.s1.out_bw|class-bw}}">{{diff.s1.out_bw}}%</td>
       <td>{{diff.s1.upd_tm}}</td>
     </tr>
     <tr>
@@ -50,8 +50,8 @@
       <td class="{{diff.s2.rx_power|class-rx}}">{{diff.s2.rx_power}}</td>
       <td>{{diff.s2.in_bps}}</td>
       <td>{{diff.s2.out_bps}}</td>
-      <td class="{{diff.s2.in_bw|class-bw}}">{{diff.s2.in_bw}}</td>
-      <td class="{{diff.s2.out_bw|class-bw}}">{{diff.s2.out_bw}}</td>
+      <td class="{{diff.s2.in_bw|class-bw}}">{{diff.s2.in_bw}}%</td>
+      <td class="{{diff.s2.out_bw|class-bw}}">{{diff.s2.out_bw}}%</td>
       <td>{{diff.s2.upd_tm}}</td>
     </tr>
     {% endfor %}

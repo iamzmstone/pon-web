@@ -7,9 +7,10 @@
                      (fn [x]
                        (if (nil? x)
                          ""
-                         (if (= "working" x)
-                           "layui-bg-green"
-                           "layui-bg-red"))))
+                         (cond
+                           (= "working" x) "layui-bg-green"
+                           (= "OffLine" x) "layui-bg-orange"
+                           :else "layui-bg-red"))))
 
 (filters/add-filter! :class-rx
                      (fn [x]
@@ -23,6 +24,7 @@
                      (fn [x]
                        (if (nil? x)
                          ""
-                         (if (<= x (env :bw-base))
-                         "layui-bg-green"
-                         "layui-bg-red"))))
+                         (cond
+                           (<= x (env :bw-low)) "layui-bg-green"
+                           (<= x (env :bw-high)) "layui-bg-orange"
+                           :else "layui-bg-red"))))

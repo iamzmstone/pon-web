@@ -17,20 +17,24 @@ layui.use(['element', 'table'], function(){
       ,{field: 'bat_name', title: 'batch', width:100}
       ,{field: 'pon', title: 'Pon', width:60}
       ,{field: 'oid', title: 'Oid', width:60}
-      ,{field: 'sn', title: 'SN', width:150, templet: function(d){
+      ,{field: 'sn', title: 'SN', width:200, templet: function(d){
       return '<a href="/onu-states/' + d.onu_id + '" class="layui-table-link">' + d.sn + '</a>'
     }}
       ,{field: 'state', title: '状态', width:100, templet: function(d){
-      if (d.state != 'working') {
-        return '<span class="layui-bg-red">' + d.state + '</span>' }
-      else {
-        return '<span class="layui-bg-green">' + d.state + '</span>' }
+      if (d.state == 'working') {
+        return '<span class="layui-bg-green">' + d.state + '</span>';
+      } else if (d.state == 'OffLine') {
+        return '<span class="layui-bg-orange">' + d.state + '</span>';
+      } else {
+        return '<span class="layui-bg-red">' + d.state + '</span>';
+      }
     }}
       ,{field: 'rx_power', title: '收光', width:80, templet: function(d){
-      if (d.rx_power < -20) {
-        return '<span class="layui-bg-red">' + d.rx_power + '</span>' }
-      else {
-        return '<span class="layui-bg-green">' + d.rx_power + '</span>' }
+      if (d.rx_power < -25) {
+        return '<span class="layui-bg-red">' + d.rx_power + '</span>';
+      } else {
+        return d.rx_power;
+      }
     }}
       ,{field: 'in_bps', title: 'in_Bps', width:100}
       ,{field: 'out_bps', title: 'out_Bps', width:100}

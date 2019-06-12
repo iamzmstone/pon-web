@@ -3,6 +3,7 @@
     [pon-web.middleware :as middleware]
     [pon-web.layout :refer [error-page]]
     [pon-web.routes.home :refer [home-routes]]
+    [pon-web.routes.onu :refer [onu-routes]]
     [reitit.ring :as ring]
     [ring.middleware.content-type :refer [wrap-content-type]]
     [ring.middleware.webjars :refer [wrap-webjars]]
@@ -18,7 +19,7 @@
   (middleware/wrap-base
     (ring/ring-handler
       (ring/router
-        [(home-routes)])
+        [(home-routes) (onu-routes)])
       (ring/routes
         (ring/create-resource-handler
           {:path "/"})
