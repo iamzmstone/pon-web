@@ -10,6 +10,20 @@
  ; set your dev database connection URL here
  :database-url "mysql://localhost:3306/db-name?user=user-name&password=pwd&autoReconnect=true&useSSL=false&characterEncoding=utf8"
 
- :rx-power-base -20
- :bw-base 80
+ :rx-power-base -25
+ :bw-low 40
+ :bw-high 80
+
+ :diff {
+   :rx 2
+   :bw 50
+   }
+
+ :sms {
+   :ip "0.0.0.0"
+   :port 2010
+   :db "sxzjcn"
+   :user "userkhzc"
+   :pass "secret"
+   }
 }
