@@ -23,8 +23,11 @@
   <div class="layui-form-item" pane>
     <label class="layui-form-label">选择OLT</label>
     <div class="layui-input-block">
+      <input type="checkbox" id="check-all" lay-skin="switch" lay-filter="check-all" />
+    </div>
+    <div class="layui-input-block">
       {% for olt in olts %}
-      <input type="checkbox" name="olts[]" title="{{olt.name}}" value="{{olt.id}}"
+      <input type="checkbox" name="olts[]" class="olt-check" title="{{olt.name}}" value="{{olt.id}}"
         {% if forloop.first %}checked{% endif %}>
       {% endfor %}
     </div>
@@ -39,5 +42,17 @@
 {% endblock %}
 {% block layuijs %}
 layui.use(['element', 'form'], function(){
+  var $ = layui.$, form = layui.form;
+
+  form.on('switch(check-all)', function(data){
+    var a = data.elem.checked;
+    if (a == true) {
+      $('.olt-check').prop('checked', true);
+      form.render('checkbox');
+    } else {
+      $('.olt-check').prop('checked', false);
+      form.render('checkbox');
+    }
+  });
 });
 {% endblock %}

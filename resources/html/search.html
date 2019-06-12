@@ -5,55 +5,58 @@
   <div class="layui-form-item">
     <label class="layui-form-label">SN</label>
     <div class="layui-input-inline">
-      <input type="text" name="sn" placeholder="请输入SN" autocomplete="off" class="layui-input">
+      <input type="text" name="sn" placeholder="请输入SN" autocomplete="off" class="layui-input" />
     </div>
     <div class="layui-form-mid layui-word-aux">模糊查找，空为查找所有</div>
   </div>
   <div class="layui-form-item">
     <label class="layui-form-label">收光范围</label>
     <div class="layui-input-inline">
-      <input type="text" name="rx_min" required  lay-verify="required" placeholder="请输入最小光功率" value="-100" autocomplete="off" class="layui-input">
+      <input type="text" name="rx_min" required  lay-verify="required" placeholder="请输入最小光功率" value="-100" autocomplete="off" class="layui-input" />
     </div>
     <div class="layui-input-inline">
-      <input type="text" name="rx_max" required  lay-verify="required" placeholder="请输入最大光功率" value="0" autocomplete="off" class="layui-input">
+      <input type="text" name="rx_max" required  lay-verify="required" placeholder="请输入最大光功率" value="0" autocomplete="off" class="layui-input" />
     </div>
     <div class="layui-form-mid layui-word-aux">请输入负数</div>
   </div>
   <div class="layui-form-item">
     <label class="layui-form-label">入流量Bps</label>
     <div class="layui-input-inline">
-      <input type="text" name="inbps" required  lay-verify="required" placeholder="请输入入流量Bps" autocomplete="off" class="layui-input" value=0>
+      <input type="text" name="inbps" required  lay-verify="required" placeholder="请输入入流量Bps" autocomplete="off" class="layui-input" value=0 />
     </div>
     <div class="layui-form-mid layui-word-aux">入流量Bps超出该值，输入0查找所有</div>
   </div>
   <div class="layui-form-item">
     <label class="layui-form-label">出流量Bps</label>
     <div class="layui-input-inline">
-      <input type="text" name="outbps" required  lay-verify="required" placeholder="请输入出流量Bps" autocomplete="off" class="layui-input" value=0>
+      <input type="text" name="outbps" required  lay-verify="required" placeholder="请输入出流量Bps" autocomplete="off" class="layui-input" value=0 />
     </div>
     <div class="layui-form-mid layui-word-aux">出流量Bps超出该值，输入0查找所有</div>
   </div>
   <div class="layui-form-item">
     <label class="layui-form-label">入流量占比</label>
     <div class="layui-input-inline">
-      <input type="text" name="inbw" required  lay-verify="required" placeholder="请输入入流量占比" autocomplete="off" class="layui-input" value=0>
+      <input type="text" name="inbw" required  lay-verify="required" placeholder="请输入入流量占比" autocomplete="off" class="layui-input" value=0 />
     </div>
     <div class="layui-form-mid layui-word-aux">入流量占比超出该值，输入0查找所有</div>
   </div>
   <div class="layui-form-item" pane>
     <label class="layui-form-label">ONU状态</label>
     <div class="layui-input-block">
-      <input type="checkbox" name="states[]" title="正常" value="working">
-      <input type="checkbox" name="states[]" title="掉电" value="DyingGasp" checked>
-      <input type="checkbox" name="states[]" title="离线" value="Offline">
-      <input type="checkbox" name="states[]" title="LOS" value="LOS">
+      <input type="checkbox" name="states[]" title="正常" value="working" lay-filter="s1" />
+      <input type="checkbox" name="states[]" title="掉电" value="DyingGasp" checked />
+      <input type="checkbox" name="states[]" title="离线" value="Offline" />
+      <input type="checkbox" name="states[]" title="LOS" value="LOS" />
     </div>
   </div>
   <div class="layui-form-item" pane>
-  <label class="layui-form-label">选择OLT</label>
+  <label class="layui-form-label"> 选择OLT </label>
+  <div class="layui-input-block">
+    <input type="checkbox" id="check-all" lay-skin="switch" lay-filter="check-all" />
+  </div>
   <div class="layui-input-block">
     {% for olt in olts %}
-    <input type="checkbox" name="olts[]" title="{{olt.name}}" value="{{olt.id}}">
+    <input type="checkbox" name="olts[]" class="olt-check" lay-filter="olt-check" title="{{olt.name}}" value="{{olt.id}}" />
     {% endfor %}
   </div>
   </div>
@@ -67,5 +70,17 @@
 {% endblock %}
 {% block layuijs %}
 layui.use(['element', 'form'], function(){
+  var $ = layui.$, form = layui.form;
+
+  form.on('switch(check-all)', function(data){
+    var a = data.elem.checked;
+    if (a == true) {
+      $('.olt-check').prop('checked', true);
+      form.render('checkbox');
+    } else {
+      $('.olt-check').prop('checked', false);
+      form.render('checkbox');
+    }
+  });
 });
 {% endblock %}
