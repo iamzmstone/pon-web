@@ -53,6 +53,7 @@
 
    :dev           [:project/dev :profiles/dev]
    :test          [:project/dev :project/test :profiles/test]
+   :prod          [:project/prod :profiles/prod]
 
    :project/dev  {:jvm-opts ["-Dconf=dev-config.edn"]
                   :dependencies [[expound "0.7.2"]
@@ -71,5 +72,8 @@
                                (pjstadig.humane-test-output/activate!)]}
    :project/test {:jvm-opts ["-Dconf=test-config.edn"]
                   :resource-paths ["env/test/resources"]}
+   :project/prod {:jvm-opts ["-Dconf=prod-config.edn"]
+                  :resource-paths ["env/prod/resources"]}
    :profiles/dev {}
-   :profiles/test {}})
+   :profiles/test {}
+   :profiles/prod {}})
