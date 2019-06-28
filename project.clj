@@ -1,6 +1,6 @@
 (defproject pon-web "0.1.0-SNAPSHOT"
 
-  :description "FIXME: write description"
+  :description "The web application of pon intellig project"
   :url "http://example.com/FIXME"
 
   :dependencies [[ch.qos.logback/logback-classic "1.2.3"]
@@ -36,7 +36,7 @@
                  [net.sourceforge.jtds/jtds "1.3.1"]]
 
   :min-lein-version "2.0.0"
-  
+
   :source-paths ["src/clj"]
   :test-paths ["test/clj"]
   :resource-paths ["resources"]
@@ -54,7 +54,6 @@
 
    :dev           [:project/dev :profiles/dev]
    :test          [:project/dev :project/test :profiles/test]
-   :prod          [:project/prod :profiles/prod]
 
    :project/dev  {:jvm-opts ["-Dconf=dev-config.edn"]
                   :dependencies [[expound "0.7.2"]
@@ -65,7 +64,7 @@
                                  [ring/ring-mock "0.4.0"]]
                   :plugins      [[com.jakemccrary/lein-test-refresh "0.24.1"]
                                  [migratus-lein "0.7.2"]]
-                  
+
                   :source-paths ["env/dev/clj"]
                   :resource-paths ["env/dev/resources"]
                   :repl-options {:init-ns user}
@@ -73,8 +72,5 @@
                                (pjstadig.humane-test-output/activate!)]}
    :project/test {:jvm-opts ["-Dconf=test-config.edn"]
                   :resource-paths ["env/test/resources"]}
-   :project/prod {:jvm-opts ["-Dconf=prod-config.edn"]
-                  :resource-paths ["env/prod/resources"]}
    :profiles/dev {}
-   :profiles/test {}
-   :profiles/prod {}})
+   :profiles/test {}})

@@ -76,10 +76,10 @@
   (-> (response/found "/search-list")
       (assoc :session
              (assoc (:session request) :conds (search-conds request)))))
-                      
+
 (defn search-list [request]
   (layout/render request "search_list.html"))
-  
+
 (defn search [request]
   (let [[page limit] (paging request)
         bat_id (:id (db/latest-done-batch))
