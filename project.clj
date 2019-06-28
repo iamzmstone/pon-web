@@ -32,6 +32,7 @@
                  [ring/ring-core "1.7.1"]
                  [ring/ring-defaults "0.3.2"]
                  [selmer "1.12.12"]
+                 [dk.ative/docjure "1.12.0"]
                  [net.sourceforge.jtds/jtds "1.3.1"]]
 
   :min-lein-version "2.0.0"

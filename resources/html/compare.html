@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 {% block content %}
-<form class="layui-form layui-form-pane" method="post" action="/diff-result">
+<form class="layui-form layui-form-pane" method="post" action="/do-compare">
   {% csrf-field %}
   <div class="layui-form-item" pane>
     <label class="layui-form-label">采集批次1</label>

@@ -17,6 +17,9 @@ profiles.clj
 /node_modules
 /log
 
+.DS_Store
+*.xls
+
 # emacs temp files
 *~
 \#*\#

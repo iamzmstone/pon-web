@@ -3,9 +3,21 @@
     [pon-web.layout :as layout]
     [pon-web.db.core :as db]
     [clojure.java.io :as io]
+    [dk.ative.docjure.spreadsheet :as spreadsheet]
     [pon-web.middleware :as middleware]
     [pon-web.config :refer [env]]
     [ring.util.http-response :as response]))
+
+(def search-header
+  [[:olt_name :bat_name :pon :oid :sn :state :rx_power :in_bps :out_bps
+    :in_bw :out_bw :upd_tm]
+   ["OLT" "采集批次" "Pon口" "OnuId" "SN" "状态" "收光" "in_Bps" "out_Bps"
+    "入流量占比" "出流量占比" "采集时间"]])
+
+(def diff-header
+  [[:olt_name :pon :oid :sn :state :rx_power :in_bps :out_bps :in_bw :out_bw :upd_tm]
+   ["OLT" "Pon口" "OnuId" "SN" "状态" "收光" "in_Bps" "out_Bps"
+    "入流量占比" "出流量占比" "采集时间"]])
 
 (defn onu-page [request]
   (layout/render request "onu_list.html"))
@@ -45,11 +57,19 @@
   (remove nil? (map #(compare-onu % bat2)
                     (db/compare-states {:batch_id bat1 :olts olts}))))
 
+(defn do-compare [request]
+  (-> (response/found "diff-result")
+      (assoc :session
+             (assoc (:session request)
+                    :comps {:bat1 (get-in request [:params :bat1])
+                            :bat2 (get-in request [:params :bat2])
+                            :olts (vals (get-in request [:params :olts]))}))))
+
 (defn comp-rst-page [request]
   (layout/render request "compare_result.html"
-                 {:diff-list (comp-rst (get-in request [:params :bat1])
-                                       (get-in request [:params :bat2])
-                                       (vals (get-in request [:params :olts])))}))
+                 {:diff-list (comp-rst (get-in request [:session :comps :bat1])
+                                       (get-in request [:session :comps :bat2])
+                                       (get-in request [:session :comps :olts]))}))
 
 (defn do-search [request]
 ;  (response/ok {:body (:params request)}))
@@ -71,6 +91,56 @@
      {:code 0 :msg "SEO" :count (:cnt (db/search-states-cnt
                                        (merge {:batch_id bat_id} conds)))
       :data onus}}))
+
+
+(defn- dump-to [data excel-file]
+  (let [wb (spreadsheet/create-workbook "onus" data)
+        sheet (spreadsheet/select-sheet "onus" wb)
+        header-row (first (spreadsheet/row-seq sheet))]
+    (spreadsheet/set-row-style!
+     header-row (spreadsheet/create-cell-style! wb {:background :yellow
+                                                    :font {:bold true}}))
+    (spreadsheet/save-workbook! excel-file wb)))
+
+(defn- vals-in-order [m v]
+  (reduce #(conj %1 (get m %2)) [] v))
+
+(defn dump-search-rst [request]
+  (let [bat_id (:id (db/latest-done-batch))
+        conds (get-in request [:session :conds])
+        onus (db/search-states
+              (merge {:batch_id bat_id :s 0 :l 10000000} conds))
+        data (conj
+              (map #(vals-in-order % (first search-header)) onus)
+              (last search-header))]
+    (dump-to data "resources/public/search-result.xls")
+    (response/found "/search-result.xls")))
+
+(defn dump-onus [request]
+  (let [bat_id (:id (db/latest-done-batch))
+        onus (db/batch-states {:batch_id bat_id :s 0 :l 10000000})
+        data (conj
+              (map #(vals-in-order % (first search-header)) onus)
+              (last search-header))]
+    (dump-to data "resources/public/onus.xls")
+    (response/found "onus.xls")))
+
+(defn- to-vec [comp-item]
+  [(vals-in-order (:s1 comp-item) (first diff-header))
+   (vals-in-order (merge (select-keys (:s1 comp-item)
+                                      (subvec (first diff-header) 0 4))
+                         (:s2 comp-item))
+                  (first diff-header))])
+
+(defn dump-diff [request]
+  (let [diffs (comp-rst (get-in request [:session :comps :bat1])
+                       (get-in request [:session :comps :bat2])
+                       (get-in request [:session :comps :olts]))
+        data (cons
+              (last diff-header)
+              (reduce #(conj %1 (first %2) (last %2)) (map to-vec diffs)))]
+    (dump-to data "resources/public/diff.xls")
+    (response/found "diff.xls")))
 
 (defn- timestamp [k v]
   (if (= k :upd_time)
@@ -102,5 +172,9 @@
    ["/do-search" {:post do-search}]
    ["/search-list" {:get search-list}]
    ["/onu-states/:id" {:get onu-states}]
+   ["/dump-search" {:get dump-search-rst}]
+   ["/dump-onus" {:get dump-onus}]
+   ["/dump-diff" {:get dump-diff}]
    ["/onu-compare" {:get compare-page}]
-   ["/diff-result" {:post comp-rst-page}]])
+   ["/do-compare" {:post do-compare}]
+   ["/diff-result" {:get comp-rst-page}]])

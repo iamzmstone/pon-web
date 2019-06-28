@@ -1,5 +1,6 @@
 {% extends "base.html" %}
 {% block content %}
+<a href="/dump-diff" style="color: #01AAED;">导出结果</a>
 <span class="layui-badge">{{ diff-list|count }}</span>
 <table class="layui-table">
   <colgroup>
@@ -36,7 +37,7 @@
       <td rowspan="2">{{diff.s1.olt_name}}</td>
       <td rowspan="2">{{diff.s1.pon}}</td>
       <td rowspan="2">{{diff.s1.oid}}</td>
-      <td rowspan="2"><a href="/onu-states/{{diff.s1.onu_id}}" class="layui-table-link">{{diff.s1.sn}}</a></td>
+      <td rowspan="2"><a href="/onu-states/{{diff.s1.onu_id}}" style="color: #01AAED;">{{diff.s1.sn}}</a></td>
       <td class="{{diff.s1.state|class-state}}">{{diff.s1.state}}</td>
       <td class="{{diff.s1.rx_power|class-rx}}">{{diff.s1.rx_power}}</td>
       <td>{{diff.s1.in_bps}}</td>
