@@ -113,8 +113,8 @@
         data (conj
               (map #(vals-in-order % (first search-header)) onus)
               (last search-header))]
-    (dump-to data "resources/public/search-result.xls")
-    (response/found "/search-result.xls")))
+    (dump-to data "/tmp/search-result.xls")
+    (response/file-response "/tmp/search-result.xls")))
 
 (defn dump-onus [request]
   (let [bat_id (:id (db/latest-done-batch))
@@ -122,8 +122,8 @@
         data (conj
               (map #(vals-in-order % (first search-header)) onus)
               (last search-header))]
-    (dump-to data "resources/public/onus.xls")
-    (response/found "onus.xls")))
+    (dump-to data "/tmp/onus.xls")
+    (response/file-response "/tmp/onus.xls")))
 
 (defn- to-vec [comp-item]
   [(vals-in-order (:s1 comp-item) (first diff-header))
@@ -139,8 +139,8 @@
         data (cons
               (last diff-header)
               (reduce #(conj %1 (first %2) (last %2)) (map to-vec diffs)))]
-    (dump-to data "resources/public/diff.xls")
-    (response/found "diff.xls")))
+    (dump-to data "/tmp/diff.xls")
+    (response/file-response "/tmp/diff.xls")))
 
 (defn- timestamp [k v]
   (if (= k :upd_time)
@@ -172,9 +172,9 @@
    ["/do-search" {:post do-search}]
    ["/search-list" {:get search-list}]
    ["/onu-states/:id" {:get onu-states}]
-   ["/dump-search" {:get dump-search-rst}]
-   ["/dump-onus" {:get dump-onus}]
-   ["/dump-diff" {:get dump-diff}]
+   ["/dump-search.xlsx" {:get dump-search-rst}]
+   ["/dump-onus.xlsx" {:get dump-onus}]
+   ["/dump-diff.xlsx" {:get dump-diff}]
    ["/onu-compare" {:get compare-page}]
    ["/do-compare" {:post do-compare}]
    ["/diff-result" {:get comp-rst-page}]])
