@@ -1,13 +1,76 @@
 {% extends "base.html" %}
 {% block content %}
 <div class="layui-row">
-<div class="layui-card layui-col-md6">
+<div class="layui-card layui-col-md4">
+  <div class="layui-card-header layui-bg-green">OLT信息</div>
+  <div class="layui-card-body">
+    <table class="layui-table" lay-skin="row" lay-size="sm">
+    <thead>
+      <tr>
+      <th>OLT</th>
+      <th>Working</th>
+      <th>DyingGasp</th>
+      <th>LOS</th>
+      <th>Offline</th>
+      <th>其它</th>
+      </tr>
+    </thead>
+    <tbody>
+    {% for olt-cnt in olt-cnts %}
+      <tr>
+      <td class="layui-bg-cyan">{{olt-cnt.olt}}</td>
+      <td>
+        {% if olt-cnt.cnt-wk > 0 %}
+        <a href="/olt-state?olt-id={{olt-cnt.id}}&states=working"
+        style="color: #01AAED;">{{olt-cnt.cnt-wk}}</a>
+        {% else %}
+        {{olt-cnt.cnt-wk}}
+        {% endif %}
+      </td>
+      <td>
+        {% if olt-cnt.cnt-dg > 0 %}
+        <a href="/olt-state?olt-id={{olt-cnt.id}}&states=DyingGasp"
+        style="color: #01AAED;">{{olt-cnt.cnt-dg}}</a>
+        {% else %}
+        {{olt-cnt.cnt-dg}}
+        {% endif %}
+      </td>
+      <td>
+        {% if olt-cnt.cnt-ls > 0 %}
+        <a href="/olt-state?olt-id={{olt-cnt.id}}&states=LOS"
+        style="color: #01AAED;">{{olt-cnt.cnt-ls}}</a>
+        {% else %}
+        {{olt-cnt.cnt-ls}}
+        {% endif %}</td>
+      <td>
+        {% if olt-cnt.cnt-ol > 0 %}
+        <a href="/olt-state?olt-id={{olt-cnt.id}}&states=Offline"
+        style="color: #01AAED;">{{olt-cnt.cnt-ol}}</a>
+        {% else %}
+        {{olt-cnt.cnt-ol}}
+        {% endif %}
+      </td>
+      <td>
+        {% if olt-cnt.cnt-ot > 0 %}
+        <a href="/olt-state?olt-id={{olt-cnt.id}}&states=AuthFail,syncMib"
+        style="color: #01AAED;">{{olt-cnt.cnt-ot}}</a>
+        {% else %}
+        {{olt-cnt.cnt-ot}}
+        {% endif %}
+      </td>
+      </tr>
+    {% endfor %}
+    </tbody>
+    </table>
+  </div>
+</div>
+<div class="layui-card layui-col-md4">
   <div class="layui-card-header layui-bg-green">ONU状态</div>
   <div class="layui-card-body">
     <canvas id="chart-state" width="400" height="300">Your browser does not support the canvas element.</canvas>
   </div>
 </div>
-<div class="layui-card layui-col-md6">
+<div class="layui-card layui-col-md4">
   <div class="layui-card-header layui-bg-green">数据采集批次</div>
   <div class="layui-card-body">
     <canvas id="chart-batch" width="400" height="300">Your browser does not support the canvas element.</canvas>

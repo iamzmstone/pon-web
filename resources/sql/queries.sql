@@ -174,4 +174,24 @@ SELECT state, count(*) cnt
 SELECT b.name, count(*) cnt
   FROM onu_states a, batches b
  WHERE a.batch_id = b.id
- GROUP by a.batch_id
+ GROUP BY a.batch_id
+ ORDER BY b.id DESC
+ LIMIT 6
+
+-- :name cnt-olt-state :? :1
+-- :doc get count of records for a given olt_id and state
+SELECT count(*) cnt
+  FROM onu_states a, onus b
+ WHERE a.onu_id = b.id
+   AND a.batch_id = (SELECT max(id) FROM batches)
+   AND a.state = :state
+   AND b.olt_id = :olt_id
+
+-- :name cnt-olt-oths :? :1
+-- :doc get count of records for a given olt_id and other states
+SELECT count(*) cnt
+  FROM onu_states a, onus b
+ WHERE a.onu_id = b.id
+   AND a.batch_id = (SELECT max(id) FROM batches)
+   AND a.state in ("AuthFail","syncMib")
+   AND b.olt_id = :olt_id

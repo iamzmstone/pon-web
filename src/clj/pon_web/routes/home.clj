@@ -2,6 +2,7 @@
   (:require
     [pon-web.layout :as layout]
     [pon-web.db.core :as db]
+    [pon-web.bl.core :as bl]
     [clojure.java.io :as io]
     [pon-web.middleware :as middleware]
     [ring.util.http-response :as response]))
@@ -9,12 +10,14 @@
 (defn home-page [request]
   (let [bat_id (:id (db/latest-done-batch))
         cnts-state (db/state-group-cnt {:batch_id bat_id})
-        cnts-batch (db/batch-group-cnt)]
+        cnts-batch (db/batch-group-cnt)
+        olt-cnts (bl/olt-cnts)]
     (layout/render request "home.html"
                    {:states (map #(:state %) cnts-state)
                     :s-cnts (map #(:cnt %) cnts-state)
                     :batches (map #(:name %) cnts-batch)
-                    :b-cnts (map #(:cnt %) cnts-batch)})))
+                    :b-cnts (map #(:cnt %) cnts-batch)
+                    :olt-cnts olt-cnts})))
 
 (defn about-page [request]
   (layout/render request "about.html"))

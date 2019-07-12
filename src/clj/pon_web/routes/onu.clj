@@ -71,6 +71,16 @@
                                        (get-in request [:session :comps :bat2])
                                        (get-in request [:session :comps :olts]))}))
 
+(defn olt-state [request]
+  (let [olt-id (get-in request [:params :olt-id])
+        states (clojure.string/split (get-in request [:params :states]) #",")
+        bat_id (:id (db/latest-done-batch))
+        conds {:batch_id bat_id :sn "%" :rx_min -100 :rx_max 0 :inbps 0
+               :outbps 0 :inbw 0 :states states :olts [olt-id] :s 0 :l 10}]
+    (-> (response/found "/search-list")
+        (assoc :session
+               (assoc (:session request) :conds conds)))))
+
 (defn do-search [request]
 ;  (response/ok {:body (:params request)}))
   (-> (response/found "/search-list")
@@ -175,6 +185,7 @@
    ["/dump-search.xlsx" {:get dump-search-rst}]
    ["/dump-onus.xlsx" {:get dump-onus}]
    ["/dump-diff.xlsx" {:get dump-diff}]
+   ["/olt-state" {:get olt-state}]
    ["/onu-compare" {:get compare-page}]
    ["/do-compare" {:post do-compare}]
    ["/diff-result" {:get comp-rst-page}]])
