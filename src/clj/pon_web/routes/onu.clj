@@ -9,16 +9,27 @@
     [ring.util.http-response :as response]))
 
 (def search-header
-  [[:olt_name :bat_name :pon :oid :sn :state :rx_power :in_bps :out_bps
-    :in_bw :out_bw :upd_tm]
-   ["OLT" "采集批次" "Pon口" "OnuId" "SN" "状态" "收光" "in_Bps" "out_Bps"
-    "入流量占比" "出流量占比" "采集时间"]])
+  [[:olt_name :bat_name :pon :oid :model :type :auth :sn
+    :state :rx_power :in_bps :out_bps :in_bw :out_bw :upd_tm]
+   ["OLT" "采集批次" "Pon口" "OnuId" "model" "type" "auth" "SN" "状态" "收光"
+    "in_Bps" "out_Bps" "入流量占比" "出流量占比" "采集时间"]])
 
 (def diff-header
   [[:olt_name :pon :oid :sn :state :rx_power :in_bps :out_bps :in_bw :out_bw :upd_tm]
    ["OLT" "Pon口" "OnuId" "SN" "状态" "收光" "in_Bps" "out_Bps"
     "入流量占比" "出流量占比" "采集时间"]])
 
+(defn olt-page [request]
+  (layout/render request "olt_list.html"
+                 {:olts (db/all-olts)}))
+
+(defn card-page [request]
+  (let [olt_id (get-in request [:path-params :id])
+        olt (db/get-olt-by-id {:id olt_id})
+        cards (db/olt-cards {:olt_id olt_id})]
+    (layout/render request "card_list.html" {:cards cards
+                                             :olt olt})))
+                 
 (defn onu-page [request]
   (layout/render request "onu_list.html"))
 
@@ -175,6 +186,8 @@
   [""
    {:middleware [middleware/wrap-csrf
                  middleware/wrap-formats]}
+   ["/olts" {:get olt-page}]
+   ["/cards/:id" {:get card-page}]
    ["/onus" {:get onu-page}]
    ["/onu-list" {:get onu-list}]
    ["/search" {:get search}]

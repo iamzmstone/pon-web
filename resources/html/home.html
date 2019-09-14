@@ -18,7 +18,7 @@
     <tbody>
     {% for olt-cnt in olt-cnts %}
       <tr>
-      <td class="layui-bg-cyan">{{olt-cnt.olt}}</td>
+      <td class="layui-bg-cyan"><a href="/cards/{{olt-cnt.id}}" style="color: #01AAED;"> {{olt-cnt.olt}}</td>
       <td>
         {% if olt-cnt.cnt-wk > 0 %}
         <a href="/olt-state?olt-id={{olt-cnt.id}}&states=working"

@@ -7,12 +7,26 @@ VALUES (:name, :ip)
 -- :name get-olt-by-name :? :1
 -- :doc retrieve an olt record by name provided
 SELECT * FROM olts
-WHERE name = :name
+ WHERE name = :name
+
+-- :name get-olt-by-id :? :1
+-- :doc retrieve an olt record by id provided
+SELECT * FROM olts
+ WHERE id = :id
 
 -- :name all-olts :? :*
 -- :doc retrieve all olt records
 SELECT * FROM olts
 ORDER BY name
+
+-- :name all-cards :? :*
+-- :doc retrieve all card records
+SELECT * FROM cards
+
+-- :name olt-cards :? :*
+-- :doc retrieve cards records for a given olt
+SELECT * FROM cards
+ WHERE olt_id = :olt_id
 
 -- :name add-batch :i!
 -- :doc add a new batch record
@@ -109,7 +123,7 @@ SELECT a.state, a.rx_power, a.in_Bps, a.out_Bps, a.in_bw, a.out_bw,
 -- :doc retrieve all states record of a specific batch
 SELECT a.onu_id, a.state, a.rx_power, a.in_Bps, a.out_Bps, a.in_bw, a.out_bw,
        date_format(a.upd_time, '%Y-%m-%d %H:%i:%s') upd_tm,
-       b.pon, b.oid, b.sn, c.name olt_name, d.name bat_name
+       b.pon, b.oid, b.sn, b.model, b.auth, b.type, c.name olt_name, d.name bat_name
   FROM onu_states a, onus b, olts c, batches d
  WHERE a.batch_id = :batch_id
    AND a.onu_id = b.id AND b.olt_id = c.id AND a.batch_id = d.id
@@ -125,7 +139,7 @@ SELECT count(*) cnt
 -- :doc retrieve onu states match search conditions
 SELECT a.onu_id, a.state, a.rx_power, a.in_Bps, a.out_Bps, a.in_bw, a.out_bw,
        date_format(a.upd_time, '%Y-%m-%d %H:%i:%s') upd_tm,
-       b.pon, b.oid, b.sn, c.name olt_name, d.name bat_name
+       b.pon, b.oid, b.sn, b.model, b.auth, b.type, c.name olt_name, d.name bat_name
   FROM onu_states a, onus b, olts c, batches d
  WHERE a.batch_id = :batch_id
    AND a.onu_id = b.id AND b.olt_id = c.id AND a.batch_id = d.id

@@ -11,13 +11,16 @@ layui.use(['element', 'table'], function(){
     elem: '#demo'
     ,url: '/search' //数据接口
     ,page: true //开启分页
-    ,limit: 10
-    ,limits: [10, 20, 40, 80]
+    ,limit: 20
+    ,limits: [10, 20, 40, 80, 100]
     ,cols: [[ //表头
       {field: 'olt_name', title: 'olt', width:150}
       ,{field: 'bat_name', title: 'batch', width:100}
       ,{field: 'pon', title: 'Pon', width:60}
       ,{field: 'oid', title: 'Oid', width:60}
+      ,{field: 'model', title: 'Model', width:80}
+      ,{field: 'type', title: 'Type', width:100}
+      ,{field: 'auth', title: 'Auth', width:60}
       ,{field: 'sn', title: 'SN', width:200, templet: function(d){
       return '<a href="/onu-states/' + d.onu_id + '" class="layui-table-link">' + d.sn + '</a>'
     }}
