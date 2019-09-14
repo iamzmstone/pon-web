@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+{% block content %}
+<table class="layui-table">
+  <colgroup>
+    <col width="200">
+    <col width="200">
+    <col width="150">
+  </colgroup>
+  <thead>
+    <tr>
+      <th>OLT名称</th>
+      <th>IP地址</th>
+      <th>厂家</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for olt in olts %}
+    <tr>
+      <td><a href="/cards/{{olt.id}}" style="color: #01AAED;">{{olt.name}}</td>
+      <td>{{olt.ip}}</td>
+      <td>{{olt.brand}}</td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% endblock %}
+{% block layuijs %}
+layui.use('element', function(){
+});
+{% endblock %}

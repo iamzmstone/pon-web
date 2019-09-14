@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+{% block content %}
+<table class="layui-table">
+  <colgroup>
+    <col width="200">
+    <col width="60">
+    <col width="100">
+    <col width="100">
+    <col width="100">
+    <col width="100">
+    <col width="100">
+    <col width="100">
+  </colgroup>
+  <thead>
+    <tr>
+      <th>OLT名称</th>
+      <th>slotno</th>
+      <th>板卡类型</th>
+      <th>Model</th>
+      <th>端口数量</th>
+      <th>hard-ver</th>
+      <th>soft-ver</th>
+      <th>状态</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for card in cards %}
+    <tr>
+      <td>{{olt.name}}</td>
+      <td>{{card.slot}}</td>
+      <td>{{card.card_type}}</td>
+      <td>{{card.model}}</td>
+      <td>{{card.port_cnt}}</td>
+      <td>{{card.hard_ver}}</td>
+      <td>{{card.soft_ver}}</td>
+      <td>{{card.status}}</td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% endblock %}
+{% block layuijs %}
+layui.use('element', function(){
+});
+{% endblock %}
