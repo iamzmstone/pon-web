@@ -1,6 +1,7 @@
 (ns pon-web.bl.core
   (:require
-   [pon-web.db.core :as db]))
+   [pon-web.db.core :as db]
+   [pon-web.etl.olt-c300 :as c300]))
 
 (def Nor-S ["working" "DyingGasp" "LOS" "Offline"])
 (def Oth-S ["AuthFail" "syncMib"])
@@ -17,3 +18,11 @@
 (defn olt-cnts []
   (let [olts (db/all-olts)]
     (map cnt-state olts)))
+
+(defn onu-conf [state-id]
+  (let [onu-state (db/get-state-by-id {:id state-id})
+        onu (db/get-onu-by-id {:id (:onu_id onu-state)})
+        olt (db/get-olt-by-id {:id (:olt_id onu)})
+        {:keys [state conf]} (c300/onu-data olt onu)]
+    (db/upd-state (merge {:id state-id} state))
+    (map #(merge {:type %} (% conf)) (keys conf))))

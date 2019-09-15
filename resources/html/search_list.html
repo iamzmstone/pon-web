@@ -2,6 +2,12 @@
 {% block content %}
 <a href="/dump-search.xlsx" style="color: #01AAED;">导出结果</a>
 <table id="demo" lay-filter="test"></table>
+<script type="text/html" id="toolbarDemo">
+  <div class="layui-btn-container">
+    <button class="layui-btn layui-btn-sm" lay-event="upd-state">ONU配置</button>
+  </div>
+</script>
+
 {% endblock %}
 {% block layuijs %}
 layui.use(['element', 'table'], function(){
@@ -49,7 +55,17 @@ layui.use(['element', 'table'], function(){
       return d.out_bw + '%'
     }}
       ,{field: 'upd_tm', title: '收集时间', width:180}
+      ,{fixed: 'right', title: '操作', width:100, align:'center', toolbar: '#toolbarDemo'}
     ]]
+  });
+
+  table.on('tool(test)', function(obj){
+    var data = obj.data;
+    var layEvent = obj.event;
+
+    if(layEvent === 'upd-state') {
+      window.location.href = "/onu-conf/" + data.id;
+    }
   });
 });
 {% endblock %}

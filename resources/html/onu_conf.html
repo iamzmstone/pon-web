@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+{% block content %}
+<pre class="layui-code">
+{% for c in confs %}
+[**command: {{c.cmd}} **]
+{{c.out}}
+{% endfor %}
+</pre>
+{% endblock %}
+{% block layuijs %}
+layui.use('code', function(){
+});
+{% endblock %}

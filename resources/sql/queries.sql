@@ -59,11 +59,6 @@ INSERT INTO onus
 (olt_id, batch_id, pon, oid, sn)
 VALUES (:olt_id, :batch_id, :pon, :oid, :sn)
 
--- :name get-onu-by-id :? :1
--- :doc retrieve onu record by id
-SELECT * FROM onus
-WHERE id = :id
-
 -- :name all-onus :? :*
 -- :doc retrieve all onus
 SELECT a.*, b.name FROM onus a, olts b
@@ -73,6 +68,11 @@ SELECT a.*, b.name FROM onus a, olts b
 -- :name onu-cnt :? :1
 -- :doc retrieve count of onus
 SELECT count(*) cnt FROM onus
+
+-- :name get-onu-by-id :? :1
+-- :doc retrieve onu record by id
+SELECT * FROM onus
+ WHERE id = :id
 
 -- :name get-onu :? :1
 -- :doc retrieve onu record by pon and oid
@@ -111,6 +111,17 @@ SELECT state, rx_power, in_Bps, out_Bps, in_bw, out_bw, date_format(upd_time, '%
 SELECT * FROM onu_states
  WHERE id = :id
 
+-- :name upd-state :! :n
+-- :doc update state according to id
+UPDATE onu_states
+   SET in_bw = :in_bw,
+       out_bw = :out_bw,
+       in_bps = :in_Bps,
+       out_bps = :out_Bps,
+       rx_power = :rx_power,
+       state = :state
+ WHERE id = :id
+
 -- :name onu-states :? :*
 -- :doc retrieve all states record of a specific onu
 SELECT a.state, a.rx_power, a.in_Bps, a.out_Bps, a.in_bw, a.out_bw,
@@ -137,7 +148,7 @@ SELECT count(*) cnt
 
 -- :name search-states :? :*
 -- :doc retrieve onu states match search conditions
-SELECT a.onu_id, a.state, a.rx_power, a.in_Bps, a.out_Bps, a.in_bw, a.out_bw,
+SELECT a.id, a.onu_id, a.state, a.rx_power, a.in_Bps, a.out_Bps, a.in_bw, a.out_bw,
        date_format(a.upd_time, '%Y-%m-%d %H:%i:%s') upd_tm,
        b.pon, b.oid, b.sn, b.model, b.auth, b.type, c.name olt_name, d.name bat_name
   FROM onu_states a, onus b, olts c, batches d

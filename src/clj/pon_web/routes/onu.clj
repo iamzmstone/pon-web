@@ -2,6 +2,7 @@
   (:require
     [pon-web.layout :as layout]
     [pon-web.db.core :as db]
+    [pon-web.bl.core :as bl]
     [clojure.java.io :as io]
     [dk.ative.docjure.spreadsheet :as spreadsheet]
     [pon-web.middleware :as middleware]
@@ -182,6 +183,10 @@
   (let [states (db/onu-states {:onu_id (get-in request [:path-params :id])})]
     (layout/render request "onu_state.html" {:states states})))
 
+(defn onu-conf [request]
+  (let [conf (bl/onu-conf (get-in request [:path-params :id]))]
+    (layout/render request "onu_conf.html" {:confs conf})))
+              
 (defn onu-routes []
   [""
    {:middleware [middleware/wrap-csrf
@@ -195,6 +200,7 @@
    ["/do-search" {:post do-search}]
    ["/search-list" {:get search-list}]
    ["/onu-states/:id" {:get onu-states}]
+   ["/onu-conf/:id" {:get onu-conf}]
    ["/dump-search.xlsx" {:get dump-search-rst}]
    ["/dump-onus.xlsx" {:get dump-onus}]
    ["/dump-diff.xlsx" {:get dump-diff}]
