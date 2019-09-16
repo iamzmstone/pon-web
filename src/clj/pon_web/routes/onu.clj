@@ -46,7 +46,7 @@
 
 (defn- paging [request]
   [(if-let [p (:page (:params request))] (read-string p) 0)
-   (if-let [l (:limit (:params request))] (read-string l) 10)])
+   (if-let [l (:limit (:params request))] (read-string l) 20)])
 
 (defn- search-conds [{:keys [params]}]
   (let [conds (assoc (merge {:states {:1 "NIL"} :olts {:1 "NIL"}} params)
@@ -88,7 +88,7 @@
         states (clojure.string/split (get-in request [:params :states]) #",")
         bat_id (:id (db/latest-done-batch))
         conds {:batch_id bat_id :sn "%" :rx_min -100 :rx_max 0 :inbps 0
-               :outbps 0 :inbw 0 :states states :olts [olt-id] :s 0 :l 10}]
+               :outbps 0 :inbw 0 :states states :olts [olt-id]}]
     (-> (response/found "/search-list")
         (assoc :session
                (assoc (:session request) :conds conds)))))
