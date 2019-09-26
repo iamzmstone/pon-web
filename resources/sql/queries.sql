@@ -88,7 +88,7 @@ SELECT * FROM onus
 
 -- :name batch-onus :? :*
 -- :doc retrieve all onus of a batch
-SELECT a.*, b.name FROM onus a, olts b 
+SELECT a.*, b.name FROM onus a, olts b
  WHERE a.olt_id = b.id
    AND batch_id = :batch_id
  LIMIT :s, :l
@@ -96,12 +96,12 @@ SELECT a.*, b.name FROM onus a, olts b
 -- :name add-state :i!
 -- :doc add a new onu_state record
 INSERT INTO onu_states
-(onu_id, batch_id, state, rx_power, in_Bps, out_Bps, in_bw, out_bw)
-VALUES (:onu_id, :batch_id, :state, :rx_power, :in_Bps, :out_Bps, :in_bw, :out_bw)
+(onu_id, batch_id, state, rx_power, in_bps, out_bps, in_bw, out_bw)
+VALUES (:onu_id, :batch_id, :state, :rx_power, :in_bps, :out_bps, :in_bw, :out_bw)
 
 -- :name get-state :? :1
 -- :doc retrieve a onu_state record according onu_id and batch_id
-SELECT state, rx_power, in_Bps, out_Bps, in_bw, out_bw, date_format(upd_time, '%Y-%m-%d %H:%i:%s') upd_tm
+SELECT state, rx_power, in_bps, out_bps, in_bw, out_bw, date_format(upd_time, '%Y-%m-%d %H:%i:%s') upd_tm
   FROM onu_states
  WHERE onu_id = :onu_id
    AND batch_id = :batch_id
@@ -116,15 +116,15 @@ SELECT * FROM onu_states
 UPDATE onu_states
    SET in_bw = :in_bw,
        out_bw = :out_bw,
-       in_bps = :in_Bps,
-       out_bps = :out_Bps,
+       in_bps = :in_bps,
+       out_bps = :out_bps,
        rx_power = :rx_power,
        state = :state
  WHERE id = :id
 
 -- :name onu-states :? :*
 -- :doc retrieve all states record of a specific onu
-SELECT a.state, a.rx_power, a.in_Bps, a.out_Bps, a.in_bw, a.out_bw,
+SELECT a.state, a.rx_power, a.in_bps, a.out_bps, a.in_bw, a.out_bw,
        date_format(a.upd_time, '%Y-%m-%d %H:%i:%s') upd_tm
   FROM onu_states a
  WHERE a.onu_id = :onu_id
@@ -132,12 +132,13 @@ SELECT a.state, a.rx_power, a.in_Bps, a.out_Bps, a.in_bw, a.out_bw,
 
 -- :name batch-states :? :*
 -- :doc retrieve all states record of a specific batch
-SELECT a.onu_id, a.state, a.rx_power, a.in_Bps, a.out_Bps, a.in_bw, a.out_bw,
+SELECT a.onu_id, a.state, a.rx_power, a.in_bps, a.out_bps, a.in_bw, a.out_bw,
        date_format(a.upd_time, '%Y-%m-%d %H:%i:%s') upd_tm,
        b.pon, b.oid, b.sn, b.model, b.auth, b.type, c.name olt_name, d.name bat_name
   FROM onu_states a, onus b, olts c, batches d
  WHERE a.batch_id = :batch_id
    AND a.onu_id = b.id AND b.olt_id = c.id AND a.batch_id = d.id
+ ORDER BY b.upd_time desc
  LIMIT :s, :l
 
 -- :name batch-states-cnt :? :1
@@ -148,7 +149,7 @@ SELECT count(*) cnt
 
 -- :name search-states :? :*
 -- :doc retrieve onu states match search conditions
-SELECT a.id, a.onu_id, a.state, a.rx_power, a.in_Bps, a.out_Bps, a.in_bw, a.out_bw,
+SELECT a.id, a.onu_id, a.state, a.rx_power, a.in_bps, a.out_bps, a.in_bw, a.out_bw,
        date_format(a.upd_time, '%Y-%m-%d %H:%i:%s') upd_tm,
        b.pon, b.oid, b.sn, b.model, b.auth, b.type, c.name olt_name, d.name bat_name
   FROM onu_states a, onus b, olts c, batches d
@@ -179,7 +180,7 @@ SELECT count(*) cnt
 
 -- :name compare-states :? :*
 -- :doc retrieve onus match batch_id and olts
-SELECT a.onu_id, a.state, a.rx_power, a.in_Bps, a.out_Bps, a.in_bw, a.out_bw,
+SELECT a.onu_id, a.state, a.rx_power, a.in_bps, a.out_bps, a.in_bw, a.out_bw,
        date_format(a.upd_time, '%Y-%m-%d %H:%i:%s') upd_tm,
        b.pon, b.oid, b.sn, c.name olt_name
   FROM onu_states a, onus b, olts c
@@ -218,5 +219,5 @@ SELECT count(*) cnt
   FROM onu_states a, onus b
  WHERE a.onu_id = b.id
    AND a.batch_id = (SELECT max(id) FROM batches)
-   AND a.state in ("AuthFail","syncMib")
+   AND a.state in ("AuthFail","syncMib", "deny", "Logging")
    AND b.olt_id = :olt_id

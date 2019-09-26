@@ -8,8 +8,8 @@
     <thead>
       <tr>
       <th>OLT</th>
-      <th>Working</th>
-      <th>DyingGasp</th>
+      <th>正常</th>
+      <th>掉电</th>
       <th>LOS</th>
       <th>Offline</th>
       <th>其它</th>
@@ -52,7 +52,7 @@
       </td>
       <td>
         {% if olt-cnt.cnt-ot > 0 %}
-        <a href="/olt-state?olt-id={{olt-cnt.id}}&states=AuthFail,syncMib"
+        <a href="/olt-state?olt-id={{olt-cnt.id}}&states=AuthFail,syncMib,deny,Logging"
         style="color: #01AAED;">{{olt-cnt.cnt-ot}}</a>
         {% else %}
         {{olt-cnt.cnt-ot}}

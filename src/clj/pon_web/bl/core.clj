@@ -1,6 +1,7 @@
 (ns pon-web.bl.core
   (:require
    [pon-web.db.core :as db]
+   [clojure.tools.logging :as log]
    [pon-web.etl.olt-c300 :as c300]))
 
 (def Nor-S ["working" "DyingGasp" "LOS" "Offline"])
@@ -24,5 +25,7 @@
         onu (db/get-onu-by-id {:id (:onu_id onu-state)})
         olt (db/get-olt-by-id {:id (:olt_id onu)})
         {:keys [state conf]} (c300/onu-data olt onu)]
-    (db/upd-state (merge {:id state-id} state))
-    (map #(merge {:type %} (% conf)) (keys conf))))
+    (do
+      (log/info "state:" state-id state)
+      (db/upd-state (merge state {:id state-id}))
+      (map #(merge {:type %} (% conf)) (keys conf)))))
