@@ -14,6 +14,11 @@
  :bw-low 40
  :bw-high 80
 
+ :olt-login "xxx"
+ :olt-pass "xxx"
+
+ :state-mapping {"Online" "working"
+                 "Power" "DyingGasp"}
  :diff {
    :rx 2
    :bw 50
