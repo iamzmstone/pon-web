@@ -58,7 +58,7 @@
           (or (not (= (:state s1) (:state s2)))
               (> (Math/abs (int (- (:rx_power s1) (:rx_power s2))))
                  (or (get-in env [:diff :rx]) 2))
-              (> (Math/abs (- (:in_bw s1) (:in_bw s2)))
+              (> (Math/abs (int (- (:in_bw s1) (:in_bw s2))))
                  (or (get-in env [:diff :bw]) 50))))
     {:s1 s1 :s2 s2}))
 

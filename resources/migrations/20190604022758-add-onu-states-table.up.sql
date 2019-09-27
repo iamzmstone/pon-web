@@ -6,8 +6,8 @@ create table onu_states(
   rx_power decimal(10,3) not null,
   in_Bps int not null,
   out_Bps int not null,
-  in_bw int not null,
-  out_bw int not null,
+  in_bw decimal(10,2) not null,
+  out_bw decimal(10,2) not null,
   upd_time timestamp,
   foreign key (onu_id) references onus(id) on delete cascade,
   foreign key (batch_id) references batches(id) on delete cascade);
