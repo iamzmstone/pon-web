@@ -5,6 +5,7 @@
 <table class="layui-table">
   <colgroup>
     <col width="150">
+    <col width="200">
     <col width="60">
     <col width="60">
     <col width="200">
@@ -19,6 +20,7 @@
   <thead>
     <tr>
       <th>OLT</th>
+      <th>名称</th>
       <th>Pon</th>
       <th>Oid</th>
       <th>SN</th>
@@ -35,6 +37,7 @@
     {% for diff in diff-list %}
     <tr>
       <td rowspan="2">{{diff.s1.olt_name}}</td>
+      <td rowspan="2">{{diff.s1.name}}</td>
       <td rowspan="2">{{diff.s1.pon}}</td>
       <td rowspan="2">{{diff.s1.oid}}</td>
       <td rowspan="2"><a href="/onu-states/{{diff.s1.onu_id}}" style="color: #01AAED;">{{diff.s1.sn}}</a></td>

@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+{% block content %}
+<table class="layui-table">
+  <thead>
+    <tr>
+      <th>OLT名称</th>
+      <th>PON口</th>
+      <th>描述</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for pon-int in pon-ints %}
+    <tr>
+      <td>{{pon-int.olt_name}}</td>
+      <td><a href="/olt-pon?olt-id={{pon-int.olt_id}}&pon={{pon-int.pon}}"
+        style="color: #01AAED;">{{pon-int.pon}}</td>
+      <td>{{pon-int.name}}</td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% endblock %}
+{% block layuijs %}
+layui.use('element', function(){
+});
+{% endblock %}

@@ -27,7 +27,7 @@
     {% for card in cards %}
     <tr>
       <td>{{olt.name}}</td>
-      <td>{{card.slot}}</td>
+      <td><a href="/pon-int/{{olt.id}}-{{card.slot}}" style="color: #01AAED;">{{card.slot}}</td>
       <td>{{card.card_type}}</td>
       <td>{{card.model}}</td>
       <td>{{card.port_cnt}}</td>

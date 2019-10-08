@@ -53,6 +53,13 @@ SELECT id, name, date_format(start_time, '%Y-%m-%d %H:%i:%s') st,
   FROM batches
  WHERE finished = true
 
+-- :name pon-desc-card
+-- :doc retrieve pon_desc record for given olt_id and slot
+SELECT a.*, b.name olt_name FROM pon_desc a, olts b
+ WHERE a.olt_id = b.id
+   AND olt_id = :olt_id
+   AND pon like :pon
+
 -- :name add-onu :i!
 -- :doc add a new onu record
 INSERT INTO onus
@@ -130,11 +137,26 @@ SELECT a.state, a.rx_power, a.in_bps, a.out_bps, a.in_bw, a.out_bw,
  WHERE a.onu_id = :onu_id
  LIMIT 20
 
+-- :name pon-states :? :*
+-- :doc retrieve all states record of a specific olt_id and pon
+SELECT a.onu_id, a.state, a.rx_power, a.in_bps, a.out_bps, a.in_bw, a.out_bw,
+       date_format(a.upd_time, '%Y-%m-%d %H:%i:%s') upd_tm,
+       b.pon, b.oid, b.sn, b.name, b.model, b.auth, b.type,
+       c.name olt_name, d.name bat_name
+  FROM onu_states a, onus b, olts c, batches d
+ WHERE a.batch_id = :batch_id
+   AND a.olt_id = :olt_id
+   AND a.pon = :pon
+   AND a.onu_id = b.id AND b.olt_id = c.id AND a.batch_id = d.id
+ ORDER BY b.upd_time desc
+ LIMIT :s, :l
+
 -- :name batch-states :? :*
 -- :doc retrieve all states record of a specific batch
 SELECT a.onu_id, a.state, a.rx_power, a.in_bps, a.out_bps, a.in_bw, a.out_bw,
        date_format(a.upd_time, '%Y-%m-%d %H:%i:%s') upd_tm,
-       b.pon, b.oid, b.sn, b.model, b.auth, b.type, c.name olt_name, d.name bat_name
+       b.olt_id, b.pon, b.oid, b.sn, b.name, b.model, b.auth, b.type,
+       c.name olt_name, d.name bat_name
   FROM onu_states a, onus b, olts c, batches d
  WHERE a.batch_id = :batch_id
    AND a.onu_id = b.id AND b.olt_id = c.id AND a.batch_id = d.id
@@ -151,11 +173,14 @@ SELECT count(*) cnt
 -- :doc retrieve onu states match search conditions
 SELECT a.id, a.onu_id, a.state, a.rx_power, a.in_bps, a.out_bps, a.in_bw, a.out_bw,
        date_format(a.upd_time, '%Y-%m-%d %H:%i:%s') upd_tm,
-       b.pon, b.oid, b.sn, b.model, b.auth, b.type, c.name olt_name, d.name bat_name
+       b.pon, b.oid, b.sn, b.name, b.model, b.auth, b.type,
+       c.name olt_name, d.name bat_name
   FROM onu_states a, onus b, olts c, batches d
  WHERE a.batch_id = :batch_id
    AND a.onu_id = b.id AND b.olt_id = c.id AND a.batch_id = d.id
    AND b.sn like :sn
+   AND b.name like :name
+   AND b.pon like :pon
    AND a.rx_power BETWEEN :rx_min AND :rx_max
    AND a.in_bps >= :inbps
    AND a.out_bps >= :outbps
@@ -171,6 +196,8 @@ SELECT count(*) cnt
  WHERE a.batch_id = :batch_id
    AND a.onu_id = b.id AND b.olt_id = c.id AND a.batch_id = d.id
    AND b.sn like :sn
+   AND b.name like :name
+   AND b.pon like :pon
    AND a.rx_power BETWEEN :rx_min AND :rx_max
    AND a.in_bps >= :inbps
    AND a.out_bps >= :outbps
@@ -182,7 +209,7 @@ SELECT count(*) cnt
 -- :doc retrieve onus match batch_id and olts
 SELECT a.onu_id, a.state, a.rx_power, a.in_bps, a.out_bps, a.in_bw, a.out_bw,
        date_format(a.upd_time, '%Y-%m-%d %H:%i:%s') upd_tm,
-       b.pon, b.oid, b.sn, c.name olt_name
+       b.pon, b.oid, b.sn, b.name, c.name olt_name
   FROM onu_states a, onus b, olts c
  WHERE a.batch_id = :batch_id
    AND a.onu_id = b.id AND b.olt_id = c.id

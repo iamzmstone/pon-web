@@ -178,6 +178,11 @@
     :mac (format "show mac %s onu %s-onu_1/%s:%d" m m pon oid)
     :uncfg "show pon onu uncfg sn loid"}))
 
+(defn gbk-str
+  "decode gbk encoding string"
+  [s]
+  (String. (.getBytes s "iso8859-1") "gbk"))
+
 (defn onu-config [olt onu]
   "Get all related olt config for a given onu, and update its state in db"
   (let [s (login (:ip olt) olt-login olt-pass)
@@ -185,7 +190,7 @@
     (try
       (doall
        (zipmap (keys cmds)
-               (map #(hash-map :cmd % :out (agent/cmd s %)) (vals cmds))))
+               (map #(hash-map :cmd % :out (gbk-str (agent/cmd s %))) (vals cmds))))
       (catch Exception ex
         (println (format "caught exception in onu-config [%s][%s:%d] : %s"
                          (:name olt) (:pon onu) (:oid onu) (.getMessage ex))))

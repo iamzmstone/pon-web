@@ -7,17 +7,20 @@
     [dk.ative.docjure.spreadsheet :as spreadsheet]
     [pon-web.middleware :as middleware]
     [pon-web.config :refer [env]]
+    [clojure.string :as str]
+    [clojure.tools.logging :as log]
     [ring.util.http-response :as response]))
 
 (def search-header
-  [[:olt_name :bat_name :pon :oid :model :type :auth :sn
+  [[:olt_name :bat_name :name :pon :oid :model :type :auth :sn
     :state :rx_power :in_bps :out_bps :in_bw :out_bw :upd_tm]
-   ["OLT" "采集批次" "Pon口" "OnuId" "model" "type" "auth" "SN" "状态" "收光"
+   ["OLT" "采集批次" "名称" "Pon口" "OnuId" "model" "type" "auth" "SN" "状态" "收光"
     "in_Bps" "out_Bps" "入流量占比" "出流量占比" "采集时间"]])
 
 (def diff-header
-  [[:olt_name :pon :oid :sn :state :rx_power :in_bps :out_bps :in_bw :out_bw :upd_tm]
-   ["OLT" "Pon口" "OnuId" "SN" "状态" "收光" "in_Bps" "out_Bps"
+  [[:olt_name :name :pon :oid :sn :state :rx_power :in_bps
+    :out_bps :in_bw :out_bw :upd_tm]
+   ["OLT" "名称" "Pon口" "OnuId" "SN" "状态" "收光" "in_Bps" "out_Bps"
     "入流量占比" "出流量占比" "采集时间"]])
 
 (defn olt-page [request]
@@ -50,15 +53,16 @@
 
 (defn- search-conds [{:keys [params]}]
   (let [conds (assoc (merge {:states {:1 "NIL"} :olts {:1 "NIL"}} params)
-                     :sn (str (:sn params) "%"))]
+                     :pon "%" :sn (str (:sn params) "%")
+                     :name (str "%" (:name params) "%"))]
     (assoc conds :states (vals (:states conds)) :olts (vals (:olts conds)))))
 
 (defn- compare-to [s1 s2]
   (if (or (nil? s1) (nil? s2)
           (or (not (= (:state s1) (:state s2)))
-              (> (Math/abs (int (- (:rx_power s1) (:rx_power s2))))
+              (> (Math/abs (double (- (:rx_power s1) (:rx_power s2))))
                  (or (get-in env [:diff :rx]) 2))
-              (> (Math/abs (int (- (:in_bw s1) (:in_bw s2))))
+              (> (Math/abs (double (- (:in_bw s1) (:in_bw s2))))
                  (or (get-in env [:diff :bw]) 50))))
     {:s1 s1 :s2 s2}))
 
@@ -87,8 +91,19 @@
   (let [olt-id (get-in request [:params :olt-id])
         states (clojure.string/split (get-in request [:params :states]) #",")
         bat_id (:id (db/latest-done-batch))
-        conds {:batch_id bat_id :sn "%" :rx_min -100 :rx_max 0 :inbps 0
-               :outbps 0 :inbw 0 :states states :olts [olt-id]}]
+        conds {:batch_id bat_id :sn "%" :name "%" :pon "%" :rx_min -100 :rx_max 0
+               :inbps 0 :outbps 0 :inbw 0 :states states :olts [olt-id]}]
+    (-> (response/found "/search-list")
+        (assoc :session
+               (assoc (:session request) :conds conds)))))
+
+(defn olt-pon [request]
+  (let [olt-id (get-in request [:params :olt-id])
+        pon (get-in request [:params :pon])
+        bat_id (:id (db/latest-done-batch))
+        conds {:batch_id bat_id :olts [olt-id] :sn "%" :name "%" :pon pon
+               :rx_min -100 :rx_max 0 :inbps 0 :outbps 0 :inbw 0
+               :states ["working" "DyingGasp" "LOS" "Offline"]}]
     (-> (response/found "/search-list")
         (assoc :session
                (assoc (:session request) :conds conds)))))
@@ -109,6 +124,7 @@
         onus (db/search-states
               (merge {:batch_id bat_id :s (* (dec page) limit) :l limit}
                      conds))]
+    (log/info "Search conditions: " conds)
     {:body
      {:code 0 :msg "SEO" :count (:cnt (db/search-states-cnt
                                        (merge {:batch_id bat_id} conds)))
@@ -186,7 +202,12 @@
 (defn onu-conf [request]
   (let [conf (bl/onu-conf (get-in request [:path-params :id]))]
     (layout/render request "onu_conf.html" {:confs conf})))
-              
+
+(defn pon-int [request]
+  (let [[olt-id slotno] (str/split (get-in request [:path-params :vals]) #"-")
+        pon-ints (db/pon-desc-card {:olt_id olt-id :pon (str slotno "/%")})]
+    (layout/render request "pon_int_list.html" {:pon-ints pon-ints})))
+
 (defn onu-routes []
   [""
    {:middleware [middleware/wrap-csrf
@@ -201,10 +222,12 @@
    ["/search-list" {:get search-list}]
    ["/onu-states/:id" {:get onu-states}]
    ["/onu-conf/:id" {:get onu-conf}]
+   ["/pon-int/:vals" {:get pon-int}]
    ["/dump-search.xlsx" {:get dump-search-rst}]
    ["/dump-onus.xlsx" {:get dump-onus}]
    ["/dump-diff.xlsx" {:get dump-diff}]
    ["/olt-state" {:get olt-state}]
+   ["/olt-pon" {:get olt-pon}]
    ["/onu-compare" {:get compare-page}]
    ["/do-compare" {:post do-compare}]
    ["/diff-result" {:get comp-rst-page}]])

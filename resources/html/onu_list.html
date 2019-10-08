@@ -16,7 +16,10 @@ layui.use(['element', 'table'], function(){
     ,cols: [[ //表头
       {field: 'olt_name', title: 'olt', width:150}
       ,{field: 'bat_name', title: 'batch', width:100}
-      ,{field: 'pon', title: 'Pon', width:60}
+      ,{field: 'name', title: '名称', width:150}
+      ,{field: 'pon', title: 'Pon', width:60, templet: function(d){
+      return '<a href="/olt-pon?olt-id=' + d.olt_id + '&pon=' + d.pon + '" class="layui-table-link">' + d.pon + '</a>'
+    }}
       ,{field: 'oid', title: 'Oid', width:60}
       ,{field: 'model', title: 'Model', width:80}
       ,{field: 'type', title: 'Type', width:100}
